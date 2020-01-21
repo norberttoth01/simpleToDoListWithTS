@@ -1,4 +1,4 @@
-import { Project } from "./project";
+import { Project, Status } from "./project.js";
 type Listener = (items: Project[]) => void;
 
 class ProjectState {
@@ -21,7 +21,7 @@ class ProjectState {
 
     addproject(title: string, description: string, people: number) {
 
-        const newProject = new Project(Math.random().toString(), title, description, people, 1)
+        const newProject = new Project(Math.random().toString(), title, description, people, Status.Active)
         this.projects.push(newProject);
         for (const listenerFn of this.listeners) {
             listenerFn(this.projects.slice())
