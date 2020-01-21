@@ -27,8 +27,16 @@ class ProjectState extends State<Project> {
       Status.Active
     );
     this.projects.push(newProject);
-    for (const listenerFn of this.listeners) {
-      listenerFn(this.projects.slice());
+    this.updateListeners();
+  }
+
+  moveProject(projectId: string, newStatus: Status) {
+    const project = this.projects.find(project => {
+      return project.id == projectId;
+    });
+    if (project && project.status !== newStatus) {
+      project.status = newStatus;
+      this.updateListeners();
     }
   }
 
@@ -37,6 +45,12 @@ class ProjectState extends State<Project> {
   }
   getProject() {
     return this.projects;
+  }
+
+  private updateListeners() {
+    for (const listenerFn of this.listeners) {
+      listenerFn(this.projects.slice());
+    }
   }
 }
 export const projectState = ProjectState.getInstance();
