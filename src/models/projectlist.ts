@@ -1,5 +1,5 @@
 import { projectState } from "./projectStateManagement.js";
-import { Project } from "./project.js";
+import { Project, Status } from "./project.js";
 
 export class ProjectList {
     templateElement: HTMLTemplateElement;
@@ -17,14 +17,22 @@ export class ProjectList {
         this.element = importedNode.firstElementChild! as HTMLElement;
         this.element.id = `${this.type}-projects`;
         projectState.addListener((projects: Project[]) => {
-            this.assignedProjects = projects;
+            const relevantProjects = projects.filter((project) => {
+                if (this.type === 'active') {
+                    return project.status === Status.Active;
+                }
+                return project.status === Status.Finished;
+            });
+
+            this.assignedProjects = relevantProjects;
             this.renderProject()
-        })
+        });
         this.attach();
         this.renderContent();
     }
     private renderProject() {
         const listEl = document.getElementById(`${this.type}-project-list`)! as HTMLUListElement;
+        listEl.innerHTML = '';
         for (const projectItem of this.assignedProjects) {
             const listItem = document.createElement('li');
             listItem.textContent = projectItem.title;
